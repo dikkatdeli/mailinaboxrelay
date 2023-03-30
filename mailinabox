@@ -1,0 +1,120 @@
+########################## cloudflare'deki dns kısmı ve mxroute kısımları dahil değil#######################################
+
+
+
+############
+mailinabox kurulumu
+############
+
+
+curl -s https://mailinabox.email/setup.sh | sudo -E bash
+
+###ilk soruya kurulacak mail adresi (info@example.com)
+
+###ikinci soru kurulacak hostname (mailbox.example.com)
+
+
+############
+kurulum tamamlanınca ssl için
+############
+apt update
+
+apt install snapd
+
+snap install core; snap refresh core
+
+
+
+apt-get remove certbot
+
+snap install --classic certbot
+
+ln -s /snap/bin/certbot /usr/bin/certbot
+
+snap set certbot trust-plugin-with-root=ok
+
+###eğer cloudflare kullanılıyorsa--v başka ise cloudflare kısmına o yazılıyor
+
+snap install certbot-dns-cloudflare
+
+
+
+mkdir -p ~/.secrets/certbot/
+ 
+
+nano ~/.secrets/certbot/cloudflare.ini 
+
+###içine aşağıdaki yazılcak;
+
+
+# Cloudflare API credentials used by Certbot
+dns_cloudflare_email = cloudflare@example.com
+dns_cloudflare_api_key = 0123456789abcdef0123456789abcdef01234
+
+
+
+chmod 0600 ~/.secrets/certbot/cloudflare.ini
+
+
+certbot certonly \
+  --dns-cloudflare \
+  --dns-cloudflare-credentials ~/.secrets/certbot/cloudflare.ini \
+  -d mailbox.example.com
+
+
+
+###############
+MXRoute part
+###############
+
+### Postfix oto. iniyor mailinabox ile
+
+nano /etc/postfix/main.cf
+
+###en sonuna
+
+# Domain-based outgoing email relay policy
+sender_dependent_relayhost_maps = hash:/etc/postfix/relay_maps
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_tls_security_level = encrypt
+smtp_tls_note_starttls_offer = yes
+
+
+nano /etc/postfix/relay_maps
+
+###içine
+
+info@example.com      [example.mxrouting.net]:587
+
+nano /etc/postfix/sasl_passwd
+
+###içine (example.mxrouting.net ve USER:PASSW0RD mxroute üzerinden alınıyor)
+
+[example.mxrouting.net]:587 USER:PASSW0RD
+
+postmap
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
