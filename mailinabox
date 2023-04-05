@@ -33,10 +33,9 @@ snap set certbot trust-plugin-with-root=ok
 
 snap install certbot-dns-cloudflare
 
-
-
 mkdir -p ~/.secrets/certbot/
  
+chmod 0600 ~/.secrets/certbot/cloudflare.ini
 
 nano ~/.secrets/certbot/cloudflare.ini 
 
