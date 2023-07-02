@@ -109,4 +109,34 @@ change the spf record to mxroute :  v=spf1 include:_s00002163.autospf.email -all
 MXroute da kullanıcı açmaya gerek bile yok. MXroutedan DKIM almaya bile gerek yok sadece yukarıdaki ayarlardan SPF yi değiştirip 
 MXroute a göre yapınca oluyor.
 
+-----------------
+-----------------
 
+nano /etc/postfix/main.cf
+
+# Domain-based outgoing email relay policy
+smtp_sender_dependent_authentication = yes
+sender_dependent_default_transport_maps = hash:/etc/postfix/relay_by_sender
+
+smtp_use_tls = yes
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+
+# hangi mail hangi serverı kullanacak onu belirliyorsun 
+
+nano /etc/postfix/relay_by_sender
+
+info@dijitalzirve.com smtp:[tuesday.mxrouting.net]:587
+@mail.dijitalklinik.com smtp:[tuesday.mxrouting.net]:587
+
+# mailleri ekledikten sonra db yi bu komutla güncelle
+postmap /etc/postfix/relay_by_sender
+
+
+
+nano /etc/postfix/sasl_passwd
+
+# hangi domain için auth bilgileri kullanılacak
+@dijitalzirve.com info@dijitalzirve.com:6CWmaVHvRs
+[tuesday.mxrouting.net]:587 mailbox@mail.dijitalklinik.com:lHPyzLeQZ
