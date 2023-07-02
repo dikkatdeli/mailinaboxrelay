@@ -16,11 +16,11 @@ For the SPF
 
 Create a Txt and name is for the subdomain we used "mail" and value is : v=spf1 include:_s00002163.autospf.email -all
 
-For MX
+For MX ( MX for recieving emails so we will use our mailbox dubdomain for the server which will recieve the emails)
 
 name is : "mail" because of the subdomain
 
-value: 	 tuesday.mxrouting.net
+value: mailbox.dijitalklinik.com
 
 for the smtp relay follw these septs:
 
