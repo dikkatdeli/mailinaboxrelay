@@ -1,0 +1,88 @@
+
+
+Email Routing > Options
+Use this server to handle my e-mails. If not, change the MX records and uncheck this option.
+
+It sould be unchecked
+
+Source: https://forum.hestiacp.com/t/how-to-configure-hestiacp-exim-4-for-smtp-relay-sendgrid-mailgun-amazon-ses-etc/618/9
+
+Just wanna share 1 more workaround which can be used for multiple domains, and will allow to use different SMTP by domain (MailJet, MailGun, SendPulse, SendGrid etc.).
+
+Edit exim4.conf.template
+ 1.1 Add after begin authenticators
+
+  
+# Smart Host Sending
+sendbysmarthosts:
+  driver = plaintext
+  public_name = LOGIN
+  hide client_send = : ${extract{user}{${lookup{$sender_address_domain}lsearch{/etc/exim4/exim_smarthosts}}}} : ${extract{pass}{${lookup{$sender_address_domain}lsearch{/etc/exim4/exim_smarthosts}}}}
+
+
+1.2 Add after begin routers:
+
+
+# Smart Host Sending
+sendbysmarthostsrouter:
+  driver = manualroute
+  domains = ! +local_domains
+# senders can be used to limit email addresses, for example: senders = user@domain1.com : *@domain2.com
+# senders = user@domain1.com
+  condition =  "${if eq{${lookup{$sender_address_domain}partial-lsearch{/etc/exim4/exim_smarthosts}{$value}}}{}{false}{true}}"
+  ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
+# headers_add = "${perl{mailtrapheaders}}"
+  transport = sendbysmarthoststransport
+  route_list = "* ${extract{smtp}{${lookup{$sender_address_domain}lsearch{/etc/exim4/exim_smarthosts}}}}::${extract{port}{${lookup{$sender_address_domain}lsearch{/etc/exim4/exim_smarthosts}}}} byname"
+# host_find_failed = defer
+# no_more
+    
+
+1.3 Add after begin transports
+
+    
+# Smart Host Sending
+sendbysmarthoststransport:
+  driver = smtp
+  port = ${extract{port}{${lookup{$sender_address_domain}lsearch{/etc/exim4/exim_smarthosts}}}}
+  hosts_require_auth = $host_address
+  hosts_require_tls = $host_address
+
+    
+Create file /etc/exim4/exim_smarthosts (root:root, 644), with next content:
+
+exim_smarthosts
+# "domain" - domain name used in index of the line
+# "user" - user (or ID) used in smarthost's SMTP
+# "pass" - password (or API secret, or API key, etc.) used for the SMTP user in smarthost
+# "smtp" - SMTP server address of smarthost
+# "port" - port used in Smarthost (586,25 or another)
+
+# sending by MailJet
+# $domain: domain=$domain user=$MAILJET_smtp_user pass=$MAILJET_api_password smtp=in-v3.mailjet.com port=587
+domain1.com: domain=domain1.com user=xxxxxx pass=xxxxxx smtp=in-v3.mailjet.com port=2525
+
+# sending by MailGun
+# $domain: domain=$domain user=postmaster@$domain pass=$MailGun_default_password smtp=smtp.eu.mailgun.org port=587
+domain1.com: domain=domain1.com user=postmaster@domain1.com pass=xxxxxx smtp=smtp.eu.mailgun.org port=587
+domain2.com: domain=domain2.com user=postmaster@domain2.com pass=xxxxxx smtp=smtp.eu.mailgun.org port=587
+
+# sending by SendPulse
+# $domain: domain=$domain user=$SENDPULSE_smtp_user pass=$SENDPULSE_api_password smtp=smtp-pulse.com port=587
+
+# sending by SendGrid
+# $domain: domain=$domain user=$SENDGRID_smtp_user pass=$SENDGRID_api_password smtp=smtp.sendgrid.net port=587
+
+Restart Exim: sudo service exim4 restart
+
+  BENİM AYAR:
+
+--------
+  ikonikmum.com: domain=ikonikmum.com user=info@ikonikmum.com pass=DR3OdPkEA smtp=tuesday.mxrouting.net port=587
+-------
+     
+Good to know:
+
+domains must be verified on SMTP relay account
+domains not existing in /etc/exim4/exim_smarthosts will use local SMTP
+in case there are 2 configs for 1 domain in /etc/exim4/exim_smarthosts only upper will be used: In example above emails from domain1.com will be sent by MailJet, and domain2.com by MailGun
