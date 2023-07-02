@@ -6,11 +6,43 @@ https://dkimvalidator.com/
 https://www.whatsmydns.net/
 
 
+MX
+Name: mail
+Value: mailbox.dijitalklinik.com
+Priority: 10
+
+TXT (Mxroute)
+x._domainkey.mail
+
+TXT (MailinaBox)
+mail._domainkey.mail
+mail._domainkey.mailbox
+
 DKIM for the mailbox server is there:
 
 https://mailbox.dijitalklinik.com/admin#external_dns
 
-If you want to use the mailbox to send the mails.
+-----
+SSL for MailinaBox:
+
+2 tane A kaydı : (.mail subodmain için)
+autoconfig.mail
+autodiscover.mail
+2 side server ipsini gösterecek
+-----
+
+A
+Value: mail
+128.140.90.230 (server ipsi)
+
+A
+Value: mailbox
+128.140.90.230 (server ipsi)
+
+-----
+
+
+If you want to use the mailbox to send the mails use above.
 
 But we want to use Mxroute as a realy so we have to follow this
 
@@ -20,7 +52,11 @@ x._domainkey.mail -> x is the selector .mail isthe subodmain name  We get the ke
 
 For the SPF
 
-Create a Txt and name is for the subdomain we used "mail" and value is : v=spf1 include:_s00002163.autospf.email -all
+Create a Txt and name is for the subdomain we used "mail" and value is :  v=spf1 include:_s00002163.autospf.email -all
+
+TXT
+Name: mail
+Value: v=spf1 include:_s00002163.autospf.email -all
 
 For MX ( MX for recieving emails so we will use our mailbox dubdomain for the server which will recieve the emails)
 
@@ -95,7 +131,7 @@ ip4 is the server ip address
 
 TXT
 Name: dijitalzirve.com
-Value: 	v=spf1 ip4:128.140.90.230 ~all
+Value: 	v=spf1 ip4:128.140.90.230 -all
 
 TXT
 Name: mail._domainkey
