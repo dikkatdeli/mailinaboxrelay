@@ -76,3 +76,37 @@ Your Postfix server is now configured to use MXroute as an outbound relay.
 -----------------------------------
 SMTP RELAY FINISH
 -----------------------------------
+
+
+-----------------------------------
+How to add a second domain
+-----------------------------------
+
+below list for sending from the mailbox server
+
+
+ip4 is the server ip address
+
+TXT
+Name: dijitalzirve.com
+Value: 	v=spf1 ip4:128.140.90.230 ~all
+
+TXT
+Name: mail._domainkey
+Value:  v=DKIM1; h=sha256; k=rsa; s=email; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8NUjqv361xwuuILx20nfwELdQ8rP+wqtABQPcckt7/TlK6OL42B4ZoBW/pAnRi1k5tHemCn1sdIF/3zNl1Rtj4XZuGsKBP2EC81zvyaS3pmUHKax67m/5mRkaumacU/30cK9cWhsmvH/g1XmN7lO9Oov1kukIF35qnU7pcUJftXH8NMOwXofO/b29LEYSGSjWISFDmnxvcFfriwDX9ZK3bp8vsxZG8oW+azCoq+7poipsNY9pIo7e/jgJbWJrpbxbcdzdYMfLQpRL1St9x959ixKZWvHsWplZI07JzHpbNnZcgimPRV+uoiGixKlwT9tB/w8WFsCjsJAuJldGuHtWwIDAQAB
+
+MX
+Name: @
+Value: mailbox.dijitalklinik.com
+Priority: 10
+
+-----------
+below the setting for mxroute relay
+-----------
+
+change the spf record to mxroute :  v=spf1 include:_s00002163.autospf.email -all
+
+MXroute da kullanıcı açmaya gerek bile yok. MXroutedan DKIM almaya bile gerek yok sadece yukarıdaki ayarlardan SPF yi değiştirip 
+MXroute a göre yapınca oluyor.
+
+
