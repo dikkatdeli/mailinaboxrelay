@@ -1,4 +1,10 @@
 
+email forwarding in kapalı olup olmaması çok önemli değil
+
+araçlar:
+https://dkimvalidator.com/
+https://www.whatsmydns.net/
+
 
 DKIM for the mailbox server is there:
 
