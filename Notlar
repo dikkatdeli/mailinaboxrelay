@@ -110,6 +110,7 @@ MXroute da kullanıcı açmaya gerek bile yok. MXroutedan DKIM almaya bile gerek
 MXroute a göre yapınca oluyor.
 
 -----------------
+hangi domainin hangi hesaptan gönderme ayarı postfix relay ayarları
 -----------------
 
 nano /etc/postfix/main.cf
@@ -150,3 +151,13 @@ postmap /etc/postfix/sasl_passwd
 
 
 service postfix reload
+
+
+
+
+
+KAYNAKLAR:
+https://serverfault.com/questions/277651/how-can-i-get-postfix-to-send-mail-to-different-relay-hosts
+https://blog.mxroute.com/configuring-postfix-to-use-mxroute-as-an-outbound-relay/
+https://mxroutedocs.com/directadmin/addemail/?ref=blog.mxroute.com
+https://gist.github.com/zmwangx/2c56aa32be68daf48c2f
