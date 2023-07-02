@@ -124,6 +124,8 @@ smtp_sasl_security_options = noanonymous
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 
 # hangi mail hangi serverı kullanacak onu belirliyorsun 
+# alttaki gibi tüm mail adresleri için yapılabilir
+# @dijitalzirve.com smtp:[tuesday.mxrouting.net]:587
 
 nano /etc/postfix/relay_by_sender
 
@@ -134,9 +136,17 @@ info@dijitalzirve.com smtp:[tuesday.mxrouting.net]:587
 postmap /etc/postfix/relay_by_sender
 
 
-
+# hangi domain için auth bilgileri kullanılacak
+# test domaini mesela sadece directadminde onu kullanacak gönderirken
+# @dijitalzirve.com ile açılanların hepside info@dijil i kullanacak
 nano /etc/postfix/sasl_passwd
 
-# hangi domain için auth bilgileri kullanılacak
 @dijitalzirve.com info@dijitalzirve.com:6CWmaVHvRs
 [tuesday.mxrouting.net]:587 mailbox@mail.dijitalklinik.com:lHPyzLeQZ
+test@dijitalzirve.com test@dijitalzirve.com:EA9C3THER
+
+# db güncellme şifreer için
+postmap /etc/postfix/sasl_passwd
+
+
+service postfix reload
