@@ -1,0 +1,78 @@
+
+
+DKIM for the mailbox server is there:
+
+https://mailbox.dijitalklinik.com/admin#external_dns
+
+If you want to use the mailbox to send the mails.
+
+But we want to use Mxroute as a realy so we have to follow this
+
+DKIM we get from mxroute panel
+
+x._domainkey.mail -> x is the selector .mail isthe subodmain name  We get the key from mxrote that is it.
+
+For the SPF
+
+Create a Txt and name is for the subdomain we used "mail" and value is : v=spf1 include:_s00002163.autospf.email -all
+
+For MX
+
+name is : "mail" because of the subdomain
+
+value: 	 tuesday.mxrouting.net
+
+for the smtp relay follw these septs:
+
+-----------------------------------
+SMTP RELAY START Source: https://blog.mxroute.com/configuring-postfix-to-use-mxroute-as-an-outbound-relay/
+-----------------------------------
+
+Step 2: Configure Postfix
+
+Once Postfix is installed, you need to configure it to use MXroute as an outbound relay. To do this, you'll need to modify the main.cf configuration file. Open the file using your preferred text editor:
+
+sudo nano /etc/postfix/main.cf
+
+Add the following lines at the end of the file (read after it, don't miss that part):
+
+relayhost = [arrow.mxrouting.net]:587
+smtp_use_tls = yes
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+
+Replace "arrow.mxrouting.net" in the above code with the SMTP hostname that you can find by following the instructions in this document: https://mxroutedocs.com/general/smtpimappopdetails/.
+
+Save and close the file.
+
+Step 3: Add SMTP Login Credentials
+
+To authenticate with MXroute's outbound relay service, you'll need to create an SMTP login credential. This is done through MXroute's DirectAdmin control panel by following the instructions in this documentation article: https://mxroutedocs.com/directadmin/addemail/.
+
+Once you have created the SMTP login credential, you need to add it to the sasl_passwd file by running the following command:
+
+sudo nano /etc/postfix/sasl_passwd
+
+Add the following line to the file, replacing USERNAME and PASSWORD with your SMTP login credentials (again, replacing "arrow.mxrouting.net" as necessary):
+
+[arrow.mxrouting.net]:587 USERNAME:PASSWORD
+
+Save and close the file.
+
+Step 4: Generate sasl_passwd.db
+
+To ensure that Postfix can read the sasl_passwd file, you need to generate the sasl_passwd.db file. To do this, run the following command:
+
+sudo postmap /etc/postfix/sasl_passwd
+
+Step 5: Reload Postfix
+
+Once you have completed the configuration steps, you need to reload Postfix for the changes to take effect. To do this, run the following command:
+
+sudo service postfix reload
+
+Your Postfix server is now configured to use MXroute as an outbound relay.
+-----------------------------------
+SMTP RELAY FINISH
+-----------------------------------
