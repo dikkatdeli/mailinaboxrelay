@@ -78,13 +78,13 @@ sudo nano /etc/postfix/main.cf
 
 Add the following lines at the end of the file (read after it, don't miss that part):
 
-relayhost = [arrow.mxrouting.net]:587
+relayhost = [tuesday.mxrouting.net]:587
 smtp_use_tls = yes
 smtp_sasl_auth_enable = yes
 smtp_sasl_security_options = noanonymous
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 
-Replace "arrow.mxrouting.net" in the above code with the SMTP hostname that you can find by following the instructions in this document: https://mxroutedocs.com/general/smtpimappopdetails/.
+Replace "tuesday.mxrouting.net" in the above code with the SMTP hostname that you can find by following the instructions in this document: https://mxroutedocs.com/general/smtpimappopdetails/.
 
 Save and close the file.
 
@@ -96,9 +96,9 @@ Once you have created the SMTP login credential, you need to add it to the sasl_
 
 sudo nano /etc/postfix/sasl_passwd
 
-Add the following line to the file, replacing USERNAME and PASSWORD with your SMTP login credentials (again, replacing "arrow.mxrouting.net" as necessary):
+Add the following line to the file, replacing USERNAME and PASSWORD with your SMTP login credentials (again, replacing "tuesday.mxrouting.net" as necessary):
 
-[arrow.mxrouting.net]:587 USERNAME:PASSWORD
+[tuesday.mxrouting.net]:587 USERNAME:PASSWORD
 
 Save and close the file.
 
