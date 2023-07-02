@@ -153,8 +153,54 @@ postmap /etc/postfix/sasl_passwd
 service postfix reload
 
 
+____________
+Alternatif versiyon
+____________
 
 
+
+# sender-dependent sasl authentication
+smtp_sender_dependent_authentication = yes
+sender_dependent_relayhost_maps = hash:/etc/postfix/sender_relay
+
+# default relayhost setting
+relayhost = [tuesday.mxrouting.net]:587
+
+# smtp authentication settings
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_sasl_mechanism_filter = plain
+smtp_use_tls = yes
+smtp_tls_security_level = encrypt
+
+
+nano /etc/postfix/sasl_passwd
+
+# per-sender authentication
+test@dijitalzirve.com test@dijitalzirve.com:EA9C3THER
+
+# per-domain authentication
+@dijitalzirve.com info@dijitalzirve.com:6CWmaVHvRs
+
+# default relayhost
+[tuesday.mxrouting.net]:587 mailbox@mail.dijitalklinik.com:lHPyzLeQZ
+
+nano /etc/postfix/sender_relay
+
+info@dijitalzirve.com  [tuesday.mxrouting.net]:587
+@mail.dijitalklinik.com [tuesday.mxrouting.net]:587
+
+chmod 600 /etc/postfix/sasl_passwd
+postmap /etc/postfix/sasl_passwd
+postmap /etc/postfix/sender_relay
+
+postfix reload
+systemctl restart postfix.service
+
+____________
+Alternatif versiyon
+____________
 
 KAYNAKLAR:
 https://serverfault.com/questions/277651/how-can-i-get-postfix-to-send-mail-to-different-relay-hosts
